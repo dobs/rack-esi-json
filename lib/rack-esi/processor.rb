@@ -2,7 +2,9 @@ class Rack::ESI
   class Processor < Struct.new(:esi, :env)
     class Linear < self
       def process_document(d)
-        d.each { |n| process_node n }
+        d.gsub(Rack::ESI::Tag::MATCH_TAG_REGEX) do
+          Node::Tag.new(esi, env, $1).process
+        end
       end
     end
 
@@ -15,29 +17,7 @@ class Rack::ESI
       buffer
     end
 
-    def include(path)
-      esi.call env.merge('PATH_INFO' => path, 'REQUEST_URI' => path)
-    rescue => e
-      return 500, {}, []
-    end
-
     def process_node(node)
-      case node.name
-      when 'include'
-        status, headers, body = include node['src']
-
-        unless status == 200 or node['alt'].nil?
-          status, headers, body = include node['alt']
-        end
-
-        if status == 200
-          node.replace read(body)
-        elsif node['onerror'] != 'continue'
-          raise Error
-        end
-      else
-        node.remove
-      end
     end
 
     def process_document(document)
@@ -45,7 +25,7 @@ class Rack::ESI
     end
 
     def process(body)
-      document = esi.parser.parse read(body)
+      document = read(body)
       process_document document
       [
         document.send( esi.serializer )
