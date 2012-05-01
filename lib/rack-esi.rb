@@ -35,7 +35,7 @@ class Rack::ESI
 
     status, headers, body = @app.call env.dup
 
-    if status == 200 and headers['Content-Type'] =~ /text\/html/
+    if status == 200
       body = @processor.new(self, env).process body
     end
 
