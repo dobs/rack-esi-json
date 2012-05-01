@@ -2,13 +2,12 @@ class Rack::ESI
   class Processor < Struct.new(:esi, :env)
     class Linear < self
       def process_document(d)
-        d.xpath('//e:*', 'e' => NAMESPACE).each { |n| process_node n }
+        d.each { |n| process_node n }
       end
     end
 
     autoload :Threaded, File.expand_path('../threaded', __FILE__)
 
-    NAMESPACE = 'http://www.edge-delivery.org/esi/1.0'
     Error = Class.new RuntimeError
 
     def read(enumerable, buffer = '')
@@ -17,7 +16,6 @@ class Rack::ESI
     end
 
     def include(path)
-      # RADAR patron here?
       esi.call env.merge('PATH_INFO' => path, 'REQUEST_URI' => path)
     rescue => e
       return 500, {}, []
