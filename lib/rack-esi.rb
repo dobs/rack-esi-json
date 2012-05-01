@@ -1,16 +1,16 @@
 require 'rack'
-require 'nokogiri'
 require 'bundler'
 Bundler.require
 
 require File.expand_path('../rack-esi/processor', __FILE__)
+require File.expand_path('../rack-esi/parser', __FILE__)
 
 class Rack::ESI
 
   def initialize(app, options = {})
     @app        = app
 
-    @parser     = options.fetch :parser, Nokogiri::XML::Document
+    @parser     = options.fetch :parser, Parser
     @serializer = options.fetch :serializer, :to_xhtml
     @skip       = options[:skip]
     @poolsize   = options.fetch :poolsize, 4
