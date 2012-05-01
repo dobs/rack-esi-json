@@ -11,7 +11,7 @@ class Rack::ESI
     @app        = app
 
     @parser     = options.fetch :parser, Parser
-    @serializer = options.fetch :serializer, :to_xhtml
+    @serializer = options.fetch :serializer, :to_s
     @skip       = options[:skip]
     @poolsize   = options.fetch :poolsize, 4
     @processor  = @poolsize == 1 ? Processor::Linear : Processor::Threaded
