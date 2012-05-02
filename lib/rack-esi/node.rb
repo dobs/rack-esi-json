@@ -38,7 +38,7 @@ class Rack::ESI
       protected
 
       def parse
-
+        # TODO Parse tag attributes
       end
     end
 
