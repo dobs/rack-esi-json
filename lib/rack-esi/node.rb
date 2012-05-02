@@ -23,9 +23,11 @@ class Rack::ESI
       end
 
       def process
-        case self.name
+        case name
         when 'include'
           status, headers, body = include self.attributes['src']
+
+          puts "#{status}, #{headers}, #{body}"
 
           unless status == 200 or self.attributes['alt'].nil?
             status, headers, body = include self.attributes['alt']
@@ -42,10 +44,13 @@ class Rack::ESI
       protected
 
       def parse(data)
-        @attributes = []
-        @namespace, @name, attrs = PARSE_TAG_REGEX.match(data)
-        attrs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
-          @attributes[key] = value
+        @attributes = {}
+        @namespace, @name, attrs = PARSE_TAG_REGEX.match(data).captures
+
+        if !attrs.nil?
+          attrs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
+            @attributes[key] = value
+          end
         end
       end
     end
