@@ -2,7 +2,7 @@ class Rack::ESI
   class Processor < Struct.new(:esi, :env)
     class Linear < self
       def process_document(d)
-        d.gsub(Rack::ESI::Tag::MATCH_TAG_REGEX) do
+        d.gsub(Rack::ESI::Node::Tag::MATCH_TAG_REGEX) do
           Node::Tag.new(esi, env, $1).process
         end
       end

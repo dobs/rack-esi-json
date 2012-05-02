@@ -4,6 +4,7 @@ class Rack::ESI
       attr_reader :name, :attributes
 
       ON_ERROR_CONTINUE = 'continue'
+      MATCH_TAG_REGEX = /(\<esi\:.*?\/\>)/
 
       IncludeError = Class.new RuntimeError
 
