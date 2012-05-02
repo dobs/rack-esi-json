@@ -27,7 +27,7 @@ class Rack::ESI
     @queue.push block
   end
 
-  attr_reader :parser, :serializer
+  attr_reader :serializer
 
   def call(env)
     return @app.call(env) if @skip === env['PATH_INFO']
