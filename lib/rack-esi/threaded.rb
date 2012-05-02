@@ -36,7 +36,7 @@ class Rack::ESI
       # TODO Modify to run properly threaded -- likely won't work with current
       # gsub strategy
       countdown, main = document.scan(Rack::ESI::Node::Tag::MATCH_TAG_REGEX).length, Thread.current
-      d.gsub(Rack::ESI::Node::Tag::MATCH_TAG_REGEX) do
+      document.gsub(Rack::ESI::Node::Tag::MATCH_TAG_REGEX) do
         esi.queue do
           Node::Tag.new(esi, env, $1).process
           main.run if (countdown -= 1).zero?
