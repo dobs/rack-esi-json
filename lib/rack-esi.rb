@@ -3,6 +3,7 @@ require 'bundler'
 Bundler.require
 
 require File.expand_path('../rack-esi/processor', __FILE__)
+require File.expand_path('../rack-esi/node', __FILE__)
 
 class Rack::ESI
 
