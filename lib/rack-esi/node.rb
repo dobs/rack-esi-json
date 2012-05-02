@@ -16,7 +16,8 @@ class Rack::ESI
       end
 
       def include(path)
-        esi.call env.merge('PATH_INFO' => path, 'REQUEST_URI' => path)
+        path_info, query_string = path.split '?'
+        esi.call env.merge('PATH_INFO' => path_info, 'REQUEST_URI' => path, 'QUERY_STRING' => query_string)
       rescue => e
         return 500, {}, []
       end
