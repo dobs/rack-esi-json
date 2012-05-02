@@ -34,7 +34,7 @@ class Rack::ESI
           end
 
           if status == 200
-            self.replace read(body)
+            esi.read(body)
           elsif self.attributes['onerror'] != ON_ERROR_CONTINUE
             raise IncludeError
           end
