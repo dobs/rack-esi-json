@@ -33,16 +33,15 @@ class Rack::ESI
 
   class Processor::Threaded < Processor
     def process_document(document)
-      nodes = document.xpath '//e:*', 'e' => NAMESPACE
-
-      countdown, main = nodes.length, Thread.current
-      nodes.each do |node|
+      # TODO Modify to run properly threaded -- likely won't work with current
+      # gsub strategy
+      countdown, main = document.scan(Rack::ESI::Node::Tag::MATCH_TAG_REGEX).length, Thread.current
+      d.gsub(Rack::ESI::Node::Tag::MATCH_TAG_REGEX) do
         esi.queue do
-          process_node node
+          Node::Tag.new(esi, env, $1).process
           main.run if (countdown -= 1).zero?
         end
       end
-      # TODO prevent nesting depth bigger than poolsize
       Thread.stop if countdown > 0 # wait for worker
     end
   end
