@@ -12,17 +12,12 @@ class Rack::ESI
 
     Error = Class.new RuntimeError
 
-    def read(enumerable, buffer = '')
-      enumerable.each { |str| buffer << str }
-      buffer
-    end
-
     def process_document(document)
       raise NotImplementedError
     end
 
     def process(body)
-      document = read(body)
+      document = esi.read(body)
       process_document document
       [
         document.send( esi.serializer )

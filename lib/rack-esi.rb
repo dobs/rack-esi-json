@@ -27,6 +27,11 @@ class Rack::ESI
     @queue.push block
   end
 
+  def read(enumerable, buffer = '')
+    enumerable.each { |str| buffer << str }
+    buffer
+  end
+
   attr_reader :serializer
 
   def call(env)
