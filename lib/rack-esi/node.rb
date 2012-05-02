@@ -1,10 +1,12 @@
 class Rack::ESI
   class Node < Struct.new(:esi, :env, :data)
     class Tag < self
-      attr_reader :name, :attributes
+      attr_reader :namespace, :name, :attributes
 
       ON_ERROR_CONTINUE = 'continue'
       MATCH_TAG_REGEX = /(\<esi\:.*?\/\>)/
+      PARSE_TAG_REGEX = /\<(?:(?<namespace>\w+):)?(?<name>\w+)(?<attributes>\s+.*?)\s*\/?\>/
+      PARSE_ATTRIBUTES_REGEX = /(?:(?<key>\w+)=['"](?<value>.*?)['"])+/
 
       IncludeError = Class.new RuntimeError
 
@@ -38,8 +40,12 @@ class Rack::ESI
 
       protected
 
-      def parse
-        # TODO Parse tag attributes
+      def parse(data)
+        @attributes = []
+        @namespace, @name, attrs = PARSE_TAG_REGEX.match(data)
+        attrs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
+          @attributes[key] = value
+        end
       end
     end
 
