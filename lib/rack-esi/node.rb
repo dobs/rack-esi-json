@@ -6,7 +6,7 @@ class Rack::ESI
       ON_ERROR_CONTINUE = 'continue'
       MATCH_TAG_REGEX = /(\<esi\:.*?\/\>)/
       PARSE_TAG_REGEX = /\<(?:(?<namespace>\w+):)?(?<name>\w+)(?<attributes>\s+.*?)\s*\/?\>/
-      PARSE_ATTRIBUTES_REGEX = /\s+(\w+)=['"](.*?)['"]/
+      PARSE_ATTRIBUTES_REGEX = /\s+(?<key>\w+)=['"](?<value>.*?)['"]/
 
       IncludeError = Class.new RuntimeError
 
