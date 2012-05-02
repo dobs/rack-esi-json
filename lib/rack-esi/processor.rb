@@ -17,9 +17,6 @@ class Rack::ESI
       buffer
     end
 
-    def process_node(node)
-    end
-
     def process_document(document)
       raise NotImplementedError
     end
