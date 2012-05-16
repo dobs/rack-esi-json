@@ -14,17 +14,6 @@ class Rack::ESI
     @processor  = @poolsize == 1 ? Processor::Linear : Processor::Threaded
   end
 
-  def queue(&block)
-    unless @queue
-      @queue, @group = Queue.new, ThreadGroup.new
-      @poolsize.times { @group.add Worker.new(@queue) }
-
-      at_exit { Finisher.wait @queue }
-    end
-
-    @queue.push block
-  end
-
   def read(enumerable, buffer = '')
     enumerable.each { |str| buffer << str }
     buffer
