@@ -18,9 +18,8 @@ class Rack::ESI
 
     def process(body)
       document = esi.read(body)
-      process_document document
       [
-        document.send( esi.serializer )
+        process_document(document).send( esi.serializer )
       ]
     end
   end
