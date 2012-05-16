@@ -12,7 +12,6 @@ class Rack::ESI
 
       def initialize(esi, env, data)
         super(esi, env, data)
-        parse(data)
       end
 
       def include(path)
@@ -23,11 +22,10 @@ class Rack::ESI
       end
 
       def process
+        parse(data)
         case name
         when 'include'
           status, headers, body = include self.attributes['src']
-
-          puts "#{status}, #{headers}, #{body}"
 
           unless status == 200 or self.attributes['alt'].nil?
             status, headers, body = include self.attributes['alt']
@@ -39,14 +37,16 @@ class Rack::ESI
             raise IncludeError
           end
         end
+      rescue
+        data
       end
 
       protected
 
       def parse(data)
-        @attributes = {}
         @namespace, @name, attrs = PARSE_TAG_REGEX.match(data).captures
 
+        @attributes = {}
         if !attrs.nil?
           attrs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
             @attributes[key] = value
