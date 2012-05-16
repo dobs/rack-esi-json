@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "rack-esi/version"
 
 Gem::Specification.new do |s|
-  s.name        = "rack-esi"
+  s.name        = "rack-esi-json"
   s.version     = Rack::ESI::VERSION
   s.authors     = ["Florian Aßmann"]
   s.email       = ["florian.assmann@email.de"]
@@ -22,7 +22,5 @@ EOF
   s.require_paths = ["lib"]
 
   s.add_dependency "rack"
-  s.add_dependency "nokogiri"
-  # s.add_dependency "patron"
   s.add_development_dependency "riot"
 end
