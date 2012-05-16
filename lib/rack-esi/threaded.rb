@@ -2,48 +2,20 @@ require 'thread'
 #require 'timeout'
 
 class Rack::ESI
+  class Processor
+    class Threaded < Processor
+      THREAD_TIMEOUT = 10 # Thread execution timeout in seconds.
 
-  class Finisher < Proc
-    def self.wait(queue)
-      finisher = new do |worker|
-        puts "Finishing #{ worker.inspect }..."
-        worker[:finish] = true
-        queue.push finisher
-      end
-
-      # cast the first stone
-      queue.push finisher
-
-      # wait at the end
-      queue.pop
-    end
-  end
-
-  class Worker < Thread
-    def initialize(queue)
-      super do
-        begin
-          queue.pop[ self ]
-        rescue => e
-          puts e
-        end until key? :finish
-      end
-    end
-  end
-
-  class Processor::Threaded < Processor
-    def process_document(document)
-      # TODO Modify to run properly threaded -- likely won't work with current
-      # gsub strategy
-      countdown, main = document.scan(Rack::ESI::Node::Tag::MATCH_TAG_REGEX).length, Thread.current
-      document.gsub(Rack::ESI::Node::Tag::MATCH_TAG_REGEX) do
-        esi.queue do
-          Node::Tag.new(esi, env, $1).process
-          main.run if (countdown -= 1).zero?
+      # TODO Re-implement a queue system similar to boof implementation to
+      # restrict current number of running threads.
+      # TODO Better timeout implementation
+      def process_document(document)
+        threads = []
+        document.split(Rack::ESI::Node::Tag::MATCH_TAG_REGEX).each do |fragment|
+          threads << Thread.new { Thread.current[:body] = Node::Tag.new(esi, env, fragment).process }
         end
+        threads.map { |thread| thread.join(THREAD_TIMEOUT)[:body] }.join('')
       end
-      Thread.stop if countdown > 0 # wait for worker
     end
   end
-
 end
