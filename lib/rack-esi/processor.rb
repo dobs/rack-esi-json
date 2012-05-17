@@ -10,8 +10,6 @@ class Rack::ESI
 
     autoload :Threaded, File.expand_path('../threaded', __FILE__)
 
-    Error = Class.new RuntimeError
-
     def process_document(document)
       raise NotImplementedError
     end
