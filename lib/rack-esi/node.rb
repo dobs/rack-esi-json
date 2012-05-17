@@ -22,36 +22,39 @@ class Rack::ESI
       end
 
       def process
-        parse(data)
+        namespace, name, attributes = parse(data) rescue return data
+
         case name
         when 'include'
-          status, headers, body = include self.attributes['src']
+          status, headers, body = include attributes['src']
 
-          unless status == 200 or self.attributes['alt'].nil?
-            status, headers, body = include self.attributes['alt']
+          puts status, headers, body
+
+          unless status == 200 or attributes['alt'].nil?
+            status, headers, body = include attributes['alt']
           end
 
           if status == 200
             esi.read(body)
-          elsif self.attributes['onerror'] != ON_ERROR_CONTINUE
+          elsif attributes['onerror'] != ON_ERROR_CONTINUE
             raise IncludeError
           end
         end
-      rescue
-        data
       end
 
       protected
 
       def parse(data)
-        @namespace, @name, attrs = PARSE_TAG_REGEX.match(data).captures
+        namespace, name, attribute_pairs = PARSE_TAG_REGEX.match(data).captures
 
-        @attributes = {}
-        if !attrs.nil?
-          attrs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
-            @attributes[key] = value
+        attributes = {}
+        if !attribute_pairs.nil?
+          attribute_pairs.scan(PARSE_ATTRIBUTES_REGEX).each do |key, value|
+            attributes[key] = value
           end
         end
+
+        [namespace, name, attributes]
       end
     end
 
