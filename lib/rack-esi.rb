@@ -6,12 +6,15 @@ require File.expand_path('../rack-esi/processor', __FILE__)
 require File.expand_path('../rack-esi/node', __FILE__)
 
 class Rack::ESI
+  attr_accessor :timeout
+
   def initialize(app, options = {})
     @app        = app
     @serializer = options.fetch :serializer, :to_s
     @skip       = options[:skip]
     @poolsize   = options.fetch :poolsize, 4
     @processor  = @poolsize == 1 ? Processor::Linear : Processor::Threaded
+    @timeout    = options.fetch :timeout, 300
   end
 
   def read(enumerable, buffer = '')
