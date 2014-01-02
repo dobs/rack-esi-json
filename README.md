@@ -1,3 +1,7 @@
+# Note: This project is currently unmaintained.
+
+This was a bit of an idealistic project for a former job dropped in favour of a one-off solution. There are a number of challenging edge cases when using ESI with JSON before even getting off the ground.
+
 # rack-esi
 
 Rack-ESI is a Nokogiri based ESI middleware implementation for Rack with support for include tags, all other ESI namespaced nodes are just removed.
